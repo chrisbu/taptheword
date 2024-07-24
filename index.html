@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Definition App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: white;
+            text-align: center;
+        }
+        .word {
+            color: green;
+            font-size: 2em;
+            margin-top: 20%;
+        }
+        .hidden {
+            display: none;
+        }
+        .definition {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Score: <span id="score">0</span></h1>
+	<small>Tap the word</small>
+        <div class="word" id="word"></div>
+        <div class="definition hidden" id="definition"></div>
+	<br/>
+	<br/>
+        <button class="btn btn-success mt-3 hidden" id="nextBtn">Next</button>
+	<br/><br/>
+        <button class="btn btn-primary mt-3" id="defineBtn">Define</button>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const words = [
+            {"word":"plethora","definition":"<definition>"},
+            {"word":"inferno","definition":"<definition>"},
+            {"word":"perparatory","definition":"<definition>"},
+            {"word":"propriety","definition":"<definition>"},
+            {"word":"proclivity","definition":"<definition>"},
+            {"word":"turbulent","definition":"<definition>"},
+	    {"word":"abruptly","definition":"<definition>"},
+            {"word":"obnoxious","definition":"<definition>"},
+            {"word":"chauvinist","definition":"<definition>"},
+            {"word":"deluded","definition":"<definition>"},
+            {"word":"enunciated","definition":"<definition>"},
+            {"word":"scrutinise","definition":"<definition>"},
+            {"word":"cloying","definition":"<definition>"},
+            {"word":"innuendos","definition":"<definition>"},
+            {"word":"simultaneously","definition":"<definition>"},
+            {"word":"futile","definition":"<definition>"},
+            {"word":"tangible","definition":"<definition>"},
+            {"word":"hostile","definition":"<definition>"},
+            {"word":"ecstatic","definition":"<definition>"},
+            {"word":"nonchalant","definition":"<definition>"},
+            {"word":"traipsing","definition":"<definition>"},
+            {"word":"arrogance","definition":"<definition>"},
+            {"word":"persuasion","definition":"<definition>"},
+
+
+
+
+        ];
+
+        const audioFiles = [
+            "1.mp3",
+            "2.mp3",
+            "3.mp3",
+            "4.mp3"
+        ];
+
+        let score = 0;
+        let currentWord = {};
+
+        function getRandomWord() {
+            return words[Math.floor(Math.random() * words.length)];
+        }
+
+        function getRandomAudio() {
+            return audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        }
+
+        function updateScore(points) {
+            score += points;
+            $('#score').text(score);
+        }
+
+        function playAudio() {
+            const audio = new Audio(getRandomAudio());
+            audio.play();
+        }
+
+        function showWord() {
+            currentWord = getRandomWord();
+            $('#word').text(currentWord.word);
+            $('#definition').text(currentWord.definition).addClass('hidden');
+            $('#nextBtn').addClass('hidden');
+        }
+
+        $(document).ready(function() {
+            showWord();
+
+            $('#word').click(function() {
+                playAudio();
+                updateScore(Math.floor(Math.random() * 8) + 3);
+                $('#nextBtn').removeClass('hidden');
+            });
+
+            $('#nextBtn').click(function() {
+                showWord();
+            });
+
+            $('#defineBtn').click(function() {
+                $('#definition').toggleClass('hidden');
+            });
+        });
+    </script>
+<small><br/><br/><br/>By Chris, 2024</small>
+</body>
+</html>
