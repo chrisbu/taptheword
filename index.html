@@ -21,25 +21,32 @@
         .definition {
             margin-top: 20px;
         }
+		.dropdown {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+        <div class="container">
         <h1>Score: <span id="score">0</span></h1>
-	<small>Tap the word</small>
         <div class="word" id="word"></div>
-        <div class="definition hidden" id="definition"></div>
-	<br/>
-	<br/>
+        <div class="definition" id="definition"></div>
         <button class="btn btn-success mt-3 hidden" id="nextBtn">Next</button>
-	<br/><br/>
-        <button class="btn btn-primary mt-3" id="defineBtn">Define</button>
 
+        <div class="dropdown">
+            <select class="form-control" id="wordListSelector">
+                <option value="list1">Em's words</option>
+                <option value="list2">Er's words</option>
+            </select>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const words = [
+        const wordLists = {"list1":[
     {"word":"plethora","definition":"an excessive amount of something"},
     {"word":"inferno","definition":"a large, intense fire"},
     {"word":"preparatory","definition":"serving as a preparation for something"},
@@ -63,7 +70,61 @@
     {"word":"traipsing","definition":"walking or moving wearily or reluctantly"},
     {"word":"arrogance","definition":"having or revealing an exaggerated sense of one's own importance or abilities"},
     {"word":"persuasion","definition":"the action or process of convincing someone to believe or do something"}
+],
+"list2":
+[
+    {"word":"Expansion","definition":"the action of becoming larger or more extensive"},
+    {"word":"Soaring","definition":"flying or rising high in the air"},
+    {"word":"Reverting","definition":"returning to a previous state, condition, or practice"},
+    {"word":"Explanatory","definition":"intended to explain or make clear"},
+    {"word":"Oscillating","definition":"moving or swinging back and forth at a regular speed"},
+    {"word":"Iris","definition":"the colored part of the eye around the pupil; also a type of flower"},
+    {"word":"Alphabetical","definition":"arranged in the order of the letters of the alphabet"},
+    {"word":"Oxymoron","definition":"a figure of speech in which contradictory terms appear in conjunction"},
+    {"word":"Established","definition":"having been in existence for a long time and therefore recognized and generally accepted"},
+    {"word":"Illusional","definition":"based on or producing an illusion; deceptive"},
+    {"word":"Vague","definition":"uncertain, indefinite, or unclear"},
+    {"word":"Scientism","definition":"the belief that science is the ultimate path to knowledge, often disregarding other perspectives"},
+    {"word":"Therapeutic","definition":"relating to the healing of disease or maintaining health"},
+    {"word":"Ongoing","definition":"continuing; still in progress"},
+    {"word":"Quadrilateral","definition":"a four-sided polygon"},
+    {"word":"Perplexing","definition":"completely baffling; very puzzling"},
+    {"word":"Autumnal","definition":"related to or characteristic of autumn"},
+    {"word":"Unanimous","definition":"fully in agreement; agreed upon by everyone involved"},
+    {"word":"Alliteration","definition":"the occurrence of the same letter or sound at the beginning of adjacent or closely connected words"},
+    {"word":"Arachnid","definition":"a class of joint-legged invertebrate animals, including spiders, scorpions, mites, and ticks"},
+    {"word":"Crustacean","definition":"a large class of arthropods, including crabs, lobsters, shrimps, and barnacles"},
+    {"word":"Exceptional","definition":"unusually good; outstanding"},
+    {"word":"Xenon","definition":"a chemical element, a colorless, dense, odorless noble gas"},
+    {"word":"Schematic","definition":"relating to or in the form of an outline or diagram"},
+    {"word":"Customised","definition":"modified or built according to individual or specific requirements"},
+    {"word":"Monologue","definition":"a long speech by one actor in a play or movie, or by one person in a conversation"},
+    {"word":"Extremist","definition":"a person who holds extreme political or religious views, especially one who advocates illegal or violent action"},
+    {"word":"Trilogy","definition":"a group of three related novels, plays, films, or albums"},
+    {"word":"Smoothened","definition":"made smooth; reduced in roughness or harshness"},
+    {"word":"Materialistic","definition":"excessively concerned with material possessions; money-oriented"},
+    {"word":"Surreal","definition":"having the qualities of surrealism; bizarre or dreamlike"},
+    {"word":"Colossus","definition":"a statue that is much bigger than life size; a person or thing of enormous size, importance, or ability"},
+    {"word":"Titanic","definition":"of exceptional strength, size, or power (not referring to the ship)"},
+    {"word":"Horology","definition":"the study and measurement of time, including the art of making clocks and watches"},
+    {"word":"Eon","definition":"an indefinite and very long period of time, often a period exaggerated for humorous or rhetorical effect"},
+    {"word":"Distinguished","definition":"successful, authoritative, and commanding great respect"},
+    {"word":"Logical","definition":"of or according to the rules of logic or formal argument"},
+    {"word":"Greeting","definition":"a polite word or sign of welcome or recognition"},
+    {"word":"Unread","definition":"not read or perused"},
+    {"word":"Quantum","definition":"the smallest quantity of a physical property that can exist independently, especially a discrete quantity of electromagnetic radiation"},
+    {"word":"Font","definition":"a set of type of one particular face and size"},
+    {"word":"Historic","definition":"famous or important in history, or potentially so"},
+    {"word":"Artefact","definition":"an object made by a human being, typically an item of cultural or historical interest"},
+    {"word":"Feline","definition":"relating to or affecting cats or other members of the cat family"},
+    {"word":"Economics","definition":"the branch of knowledge concerned with the production, consumption, and transfer of wealth"},
+    {"word":"Logarithmic","definition":"relating to or expressed in terms of logarithms, which are the power to which a number must be raised to get some other number"},
+    {"word":"Numeric","definition":"relating to or expressed as a number or numbers"},
+    {"word":"Algebraic","definition":"relating to or involving algebra"},
+    {"word":"Humorous","definition":"causing lighthearted laughter and amusement; comic"}
 ]
+
+}
 ;
 
         const audioFiles = [
@@ -73,10 +134,12 @@
             "4.mp3"
         ];
 
-        let score = 0;
+   let score = 0;
         let currentWord = {};
+        let currentList = "list1";
 
         function getRandomWord() {
+            const words = wordLists[currentList];
             return words[Math.floor(Math.random() * words.length)];
         }
 
@@ -97,7 +160,7 @@
         function showWord() {
             currentWord = getRandomWord();
             $('#word').text(currentWord.word);
-            $('#definition').text(currentWord.definition).addClass('hidden');
+            $('#definition').text(currentWord.definition);
             $('#nextBtn').addClass('hidden');
         }
 
@@ -114,8 +177,9 @@
                 showWord();
             });
 
-            $('#defineBtn').click(function() {
-                $('#definition').toggleClass('hidden');
+            $('#wordListSelector').change(function() {
+                currentList = $(this).val();
+                showWord();
             });
         });
     </script>
